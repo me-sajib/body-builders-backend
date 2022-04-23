@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 });
 
 const uri =
-  "mongodb+srv://bodyBuildersDb:ugOMG4pCk7jlRy5Q@cluster0.gttgi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+  "mongodb+srv://bodyBuildersDB:ugOMG4pCk7jlRy5Q@cluster0.gttgi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -24,12 +24,13 @@ async function run() {
   try {
     await client.connect();
     const buildersCollection = client.db("bodyBuilders").collection("services");
-    // get all services
     app.get("/services", async (req, res) => {
-      const result = await buildersCollection.find({}).toArray();
+      const cursor = buildersCollection.find({});
+      const result = await cursor.toArray();
       res.send(result);
     });
   } finally {
+    // await client.close();
   }
 }
 run().catch(console.dir());
