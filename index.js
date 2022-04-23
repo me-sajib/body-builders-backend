@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 
 const app = express();
@@ -24,8 +24,34 @@ async function run() {
   try {
     await client.connect();
     const buildersCollection = client.db("bodyBuilders").collection("services");
+    const enrollCollection = client.db("bodyBuilders").collection("enrolled");
+
+    // get all services data
     app.get("/services", async (req, res) => {
       const cursor = buildersCollection.find({});
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // add data and send to database
+    app.post("/services", async (req, res) => {
+      const query = req.body;
+      const addData = await buildersCollection.insertOne(query);
+      res.send(addData);
+    });
+
+    // enroll user to the course
+    app.post("/enroll", async (req, res) => {
+      const query = req.body;
+      console.log(query);
+      const enrollUser = await enrollCollection.insertOne(query);
+      res.send(enrollUser);
+    });
+
+    // enroll user to the course
+    app.get("/enroll/:id", async (req, res) => {
+      const id = req.params.id;
+      const cursor = enrollCollection.find({ email: id });
       const result = await cursor.toArray();
       res.send(result);
     });
