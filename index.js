@@ -43,7 +43,6 @@ async function run() {
     // enroll user to the course
     app.post("/enroll", async (req, res) => {
       const query = req.body;
-      console.log(query);
       const enrollUser = await enrollCollection.insertOne(query);
       res.send(enrollUser);
     });
